@@ -14,7 +14,7 @@ public class MainModel extends JFrame implements Runnable {
 
     private double FPS = 1;
     private final RenderHandler renderHandler;
-    private final UniverseShape universeShape;
+    private final Universe universe;
     private Canvas canvas = new Canvas();
 
     private final int width;
@@ -24,11 +24,11 @@ public class MainModel extends JFrame implements Runnable {
 
     private State[][] allCells;
 
-    public MainModel(int width, int height, UniverseShape universeShape) {
+    public MainModel(int width, int height, Universe universe) {
 
         this.width = width;
         this.height = height;
-        this.universeShape = universeShape;
+        this.universe = universe;
 
         this.allCells = new State[width][height];
 
@@ -53,7 +53,6 @@ public class MainModel extends JFrame implements Runnable {
         });
 
         canvas.addMouseMotionListener(new MouseAdapter() {
-
             @Override
             public void mouseDragged(MouseEvent e) {
                 allCells[MouseInfo.getPointerInfo().getLocation().x-canvas.getLocationOnScreen().x]
@@ -79,7 +78,8 @@ public class MainModel extends JFrame implements Runnable {
                 } else if (e.getKeyChar() == 'w') {
                     FPS *= 2;
                 }
-                setTitle(String.valueOf(FPS));
+
+                setTitle(FPS + ": q = slow down, w = speed up");
             }
 
             @Override
@@ -95,7 +95,7 @@ public class MainModel extends JFrame implements Runnable {
 
     }
 
-    State[][] update(State[][] allCells, int width, int height, UniverseShape universeShape) {
+    State[][] update(State[][] allCells, int width, int height, Universe universe) {
 
         State[][] newCells = new State[width][height];
 
@@ -105,13 +105,13 @@ public class MainModel extends JFrame implements Runnable {
 
                 if (allCells[rowIndex][colIndex].equals(State.ALIVE)) {
 
-                    int neighbours = checkNumOfAliveNeighbours(allCells, rowIndex, colIndex, universeShape);
+                    int neighbours = checkNumOfAliveNeighbours(allCells, rowIndex, colIndex, universe);
 
                     newCells[rowIndex][colIndex] = (neighbours == 2 || neighbours == 3) ? State.ALIVE : State.DEAD;
 
                 } else if (allCells[rowIndex][colIndex].equals(State.DEAD)) {
 
-                    int neighbours = checkNumOfAliveNeighbours(allCells, rowIndex, colIndex, universeShape);
+                    int neighbours = checkNumOfAliveNeighbours(allCells, rowIndex, colIndex, universe);
 
                     newCells[rowIndex][colIndex] = (neighbours == 3) ? State.ALIVE : State.DEAD;
 
@@ -129,13 +129,13 @@ public class MainModel extends JFrame implements Runnable {
 
     }
 
-    int checkNumOfAliveNeighbours(State[][] matrix, int rowIndex, int colIndex, UniverseShape universeShape) {
+    int checkNumOfAliveNeighbours(State[][] matrix, int rowIndex, int colIndex, Universe universe) {
         int neighbours = 0;
 
         for (int rowDisplacement = -1; rowDisplacement <= 1; rowDisplacement++) {
             for (int colDisplacement = -1; colDisplacement <= 1; colDisplacement++) {
                 if (!(rowDisplacement == 0 && colDisplacement == 0)) {
-                    neighbours += isCellAlive(matrix, rowIndex, colIndex, rowDisplacement, colDisplacement) ? 1 : 0;
+                    neighbours += universe.isCellAlive(matrix, rowIndex, colIndex, rowDisplacement, colDisplacement) ? 1 : 0;
                 }
             }
         }
@@ -188,31 +188,18 @@ public class MainModel extends JFrame implements Runnable {
         setVisible(true);
 
         // creates buffers
-        canvas.createBufferStrategy(3);
+        canvas.createBufferStrategy(4);
 
-    }
-
-    boolean isCellAlive(State[][] stateMatrix, int rowIndex, int colIndex, int rowDisplacement, int colDisplacement) {
-
-        if (0 <= rowIndex && rowIndex < stateMatrix.length) {
-            if (0 <= (rowIndex + rowDisplacement) && (rowIndex + rowDisplacement) < stateMatrix.length) {
-                if (0 <= colIndex && colIndex < stateMatrix[rowIndex + rowDisplacement].length) {
-                    if (0 <= (colIndex + colDisplacement) && (colIndex + colDisplacement) < stateMatrix[rowIndex + rowDisplacement].length) {
-                        return stateMatrix[rowIndex + rowDisplacement][colIndex + colDisplacement].equals(State.ALIVE);
-                    }
-                }
-            }
-        }
-        return false;
-
+        setTitle(FPS + ": q = slow down, w = speed up");
     }
 
     private void getInitialCells() {
 
-        for (int rowIndex = 0; rowIndex < allCells.length; rowIndex++) {
-            Arrays.fill(allCells[rowIndex], State.DEAD);
+        for (State[] allCell : allCells) {
+            Arrays.fill(allCell, State.DEAD);
         }
 
+        // Test shapes
         // block
         //allCells[10][10] = State.ALIVE;
         //allCells[10][11] = State.ALIVE;
@@ -234,7 +221,7 @@ public class MainModel extends JFrame implements Runnable {
         // random
         for (int rowIndex = 0; rowIndex < allCells.length; rowIndex++) {
             for (int colIndex = 0; colIndex < allCells[rowIndex].length; colIndex++) {
-                if (random.nextInt(1_000_000) < 500_000) {
+                if (random.nextInt(1_000_000) < 700_000) {
                     allCells[rowIndex][colIndex] = State.ALIVE;
                 }
             }
@@ -255,7 +242,7 @@ public class MainModel extends JFrame implements Runnable {
 
             while (deltaSeconds >= 1/FPS) {
 
-                allCells = update(allCells, width, height, universeShape);
+                allCells = update(allCells, width, height, universe);
 
                 deltaSeconds = 0.0;
 

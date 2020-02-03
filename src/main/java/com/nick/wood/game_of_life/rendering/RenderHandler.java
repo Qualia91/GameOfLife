@@ -48,25 +48,6 @@ public class RenderHandler {
         }
     }
 
-    public void renderArray(int[] renderPixels,  int renderWidth, int renderHeight, int xPos, int yPos, int xZoom, int yZoom) {
-        for (int y = 0; y < renderHeight; y++) {
-            for (int x = 0; x < renderWidth; x++) {
-                for (int xZoomPosition = 0; xZoomPosition < xZoom; xZoomPosition++) {
-                    for (int yZoomPosition = 0; yZoomPosition < yZoom; yZoomPosition++) {
-                        setPixel(renderPixels[x + y * renderWidth], (xPos + (x * xZoom) + xZoomPosition), (yPos + (y * yZoom) + yZoomPosition));
-                    }
-                }
-            }
-        }
-    }
-
-    public void renderRectangle(Rectangle rectangle, int xZoom, int yZoom) {
-        int[] rectanglePixels = rectangle.getPixels();
-        if (rectanglePixels != null) {
-            renderArray(rectanglePixels, rectangle.w, rectangle.h, rectangle.x, rectangle.y, xZoom, yZoom);
-        }
-    }
-
     public void clear() {
         Arrays.fill(pixels, 0);
     }
