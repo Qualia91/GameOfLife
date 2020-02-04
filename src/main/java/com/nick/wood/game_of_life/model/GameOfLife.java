@@ -1,6 +1,5 @@
 package com.nick.wood.game_of_life.model;
 
-import com.nick.wood.game_of_life.model.GameGeneral.Game;
 import com.nick.wood.game_of_life.model.universe.Universe;
 
 import java.util.Arrays;
@@ -8,19 +7,32 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-public class GameOfLife implements Game {
+public class GameOfLife {
 
 	private final Universe universe;
 	Random random = new Random();
 	private State[][] states;
 	private final int[][] pixelMatrix;
 	private final Map<State, Interaction[]> rulesMap = new HashMap<>();
+	private final int cellSize;
 
-	public GameOfLife(Universe universe, State[][] startingStateMatrix) {
+	public GameOfLife(Universe universe, State[][] startingStateMatrix, int cellSize) {
 
 		this.states = startingStateMatrix;
-		this.pixelMatrix = new int[startingStateMatrix.length][startingStateMatrix[0].length];
+		this.pixelMatrix = new int[startingStateMatrix.length*cellSize][startingStateMatrix[0].length*cellSize];
 		this.universe = universe;
+		this.cellSize = cellSize;
+
+		createRuleMap();
+
+	}
+
+	public GameOfLife(int width, int height, Universe universe, int cellSize) {
+		this.states = new State[width/cellSize][height/cellSize];
+		this.pixelMatrix = new int[width][height];
+		this.universe = universe;
+		this.cellSize = cellSize;
+		getInitialCells();
 
 		createRuleMap();
 
@@ -36,17 +48,6 @@ public class GameOfLife implements Game {
 				new Interaction(State.ALIVE, new int[] {3})
 		};
 		rulesMap.put(State.DEAD, deadInteractions);
-	}
-
-	public GameOfLife(int width, int height, Universe universe) {
-
-		this.states = new State[width][height];
-		this.pixelMatrix = new int[width][height];
-		this.universe = universe;
-		getInitialCells();
-
-		createRuleMap();
-
 	}
 
 	public void update() {
@@ -73,16 +74,18 @@ public class GameOfLife implements Game {
 
 	}
 
-	@Override
 	public void drawUserStates(Integer x, Integer y) {
-		states[x][y] = State.ALIVE;
+		states[x/cellSize][y/cellSize] = State.ALIVE;
 	}
 
-	@Override
 	public int[][] getPixelMatrix() {
 		for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
 			for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
-				pixelMatrix[rowIndex][colIndex] = states[rowIndex][colIndex].getColor().hashCode();
+				for (int i = 0; i < cellSize; i++) {
+					for (int j = 0; j < cellSize; j++) {
+						pixelMatrix[(rowIndex * (cellSize-1)) + rowIndex + i][(colIndex * (cellSize-1)) + colIndex + j] = states[rowIndex][colIndex].getColor().hashCode();
+					}
+				}
 			}
 		}
 		return pixelMatrix;
@@ -130,13 +133,13 @@ public class GameOfLife implements Game {
 		//allCells[12][12] = State.ALIVE;
 
 		// random
-		for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
-			for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
-				if (random.nextInt(1_000_000) < 700_000) {
-					states[rowIndex][colIndex] = State.ALIVE;
-				}
-			}
-		}
+		//for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
+		//	for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
+		//		if (random.nextInt(1_000_000) < 700_000) {
+		//			states[rowIndex][colIndex] = State.ALIVE;
+		//		}
+		//	}
+		//}
 	}
 
 	public State[][] getStates() {

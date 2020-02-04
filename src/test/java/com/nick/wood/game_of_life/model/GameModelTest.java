@@ -1,6 +1,5 @@
 package com.nick.wood.game_of_life.model;
 
-import com.nick.wood.game_of_life.model.GameGeneral.GameModel;
 import com.nick.wood.game_of_life.model.universe.FlatUniverse;
 import com.nick.wood.game_of_life.model.universe.SphericalUniverse;
 import com.nick.wood.game_of_life.model.universe.Universe;
@@ -63,7 +62,7 @@ class GameModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix);
+		GameOfLife game = new GameOfLife(universe, stateMatrix, 1);
 
 		game.update();
 
@@ -94,7 +93,7 @@ class GameModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix);
+		GameOfLife game = new GameOfLife(universe, stateMatrix, 1);
 
 		for (int iterations = 0; iterations < 10; iterations++) {
 
@@ -124,7 +123,7 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix1);
+		GameOfLife game = new GameOfLife(universe, stateMatrix1, 1);
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.ALIVE, State.DEAD, State.DEAD},
@@ -169,7 +168,7 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix1);
+		GameOfLife game = new GameOfLife(universe, stateMatrix1, 1);
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -213,7 +212,7 @@ class GameModelTest {
 			{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix1);
+		GameOfLife game = new GameOfLife(universe, stateMatrix1, 1);
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
