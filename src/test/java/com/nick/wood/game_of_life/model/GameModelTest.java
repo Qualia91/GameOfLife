@@ -1,12 +1,13 @@
 package com.nick.wood.game_of_life.model;
 
-import com.nick.wood.game_of_life.Main;
+import com.nick.wood.game_of_life.model.universe.FlatUniverse;
+import com.nick.wood.game_of_life.model.universe.SphericalUniverse;
+import com.nick.wood.game_of_life.model.universe.Universe;
 import org.junit.jupiter.api.Test;
 
-import java.nio.file.Path;
 import java.util.Random;
 
-class MainModelTest {
+class GameModelTest {
 
 	@Test
 	void isCellAliveTest() {
@@ -53,7 +54,7 @@ class MainModelTest {
 
 		Universe universe = new FlatUniverse();
 
-		MainModel mainModel = new MainModel(3, 3, universe);
+		GameModel gameModel = new GameModel(3, 3, universe);
 
 		State[][] stateMatrix = new State[3][3];
 
@@ -69,7 +70,7 @@ class MainModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		State[][] update = mainModel.update(stateMatrix, 3, 3, universe);
+		State[][] update = gameModel.update(stateMatrix, universe);
 
 		for (int x = 0; x < update.length; x++) {
 			for (int y = 0; y < update[x].length; y++) {
@@ -84,7 +85,7 @@ class MainModelTest {
 
 		Universe universe = new FlatUniverse();
 
-		MainModel mainModel = new MainModel(3, 3, universe);
+		GameModel gameModel = new GameModel(3, 3, universe);
 
 		State[][] stateMatrix = new State[3][3];
 
@@ -103,7 +104,7 @@ class MainModelTest {
 		stateMatrix[2][2] = State.DEAD;
 
 		for (int iterations = 0; iterations < 10; iterations++) {
-			State[][] update = mainModel.update(stateMatrix, 3, 3, universe);
+			State[][] update = gameModel.update(stateMatrix, universe);
 
 			for (int x = 0; x < update.length; x++) {
 				for (int y = 0; y < update[x].length; y++) {
@@ -121,7 +122,7 @@ class MainModelTest {
 
 		Universe universe = new SphericalUniverse();
 
-		MainModel mainModel = new MainModel(5, 5, universe);
+		GameModel gameModel = new GameModel(5, 5, universe);
 
 		State[][] stateMatrix1 = new State[][] {
 				{State.DEAD, State.ALIVE, State.ALIVE, State.ALIVE, State.DEAD},
@@ -142,7 +143,7 @@ class MainModelTest {
 		State[][] stateMatrix = stateMatrix1.clone();
 
 		for (int iterations = 0; iterations < 10; iterations++) {
-			State[][] update = mainModel.update(stateMatrix, 5, 5, universe);
+			State[][] update = gameModel.update(stateMatrix, universe);
 
 			if (iterations%2 == 0) {
 				for (int x = 0; x < update.length; x++) {
@@ -168,7 +169,7 @@ class MainModelTest {
 
 		Universe universe = new SphericalUniverse();
 
-		MainModel mainModel = new MainModel(5, 5, universe);
+		GameModel gameModel = new GameModel(5, 5, universe);
 
 		State[][] stateMatrix1 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -189,7 +190,7 @@ class MainModelTest {
 		State[][] stateMatrix = stateMatrix1.clone();
 
 		for (int iterations = 0; iterations < 10; iterations++) {
-			State[][] update = mainModel.update(stateMatrix, 5, 5, universe);
+			State[][] update = gameModel.update(stateMatrix, universe);
 
 			if (iterations%2 == 0) {
 				for (int x = 0; x < update.length; x++) {
@@ -215,7 +216,7 @@ class MainModelTest {
 
 		Universe universe = new SphericalUniverse();
 
-		MainModel mainModel = new MainModel(5, 5, universe);
+		GameModel gameModel = new GameModel(5, 5, universe);
 
 		State[][] stateMatrix1 = new State[][] {
 			{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -266,7 +267,7 @@ class MainModelTest {
 		State[][] stateMatrix = stateMatrix1.clone();
 
 		for (int iterations = 0; iterations < 4; iterations++) {
-			State[][] update = mainModel.update(stateMatrix, 5, 5, universe);
+			State[][] update = gameModel.update(stateMatrix, universe);
 
 			for (int x = 0; x < update.length; x++) {
 				for (int y = 0; y < update[x].length; y++) {

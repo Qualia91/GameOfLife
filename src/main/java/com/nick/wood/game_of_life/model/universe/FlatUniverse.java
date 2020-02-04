@@ -1,4 +1,6 @@
-package com.nick.wood.game_of_life.model;
+package com.nick.wood.game_of_life.model.universe;
+
+import com.nick.wood.game_of_life.model.State;
 
 public class FlatUniverse implements Universe {
 

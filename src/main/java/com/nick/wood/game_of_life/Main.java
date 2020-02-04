@@ -1,8 +1,8 @@
 package com.nick.wood.game_of_life;
 
-import com.nick.wood.game_of_life.model.MainModel;
-import com.nick.wood.game_of_life.model.SphericalUniverse;
-import com.nick.wood.game_of_life.model.Universe;
+import com.nick.wood.game_of_life.model.GameModel;
+import com.nick.wood.game_of_life.model.universe.SphericalUniverse;
+import com.nick.wood.game_of_life.model.universe.Universe;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,9 +18,9 @@ public class Main {
 
         Universe universe = new SphericalUniverse();
 
-        MainModel mainModel = new MainModel(width, height, universe);
+        GameModel gameModel = new GameModel(width, height, universe);
 
-        executor.submit(mainModel);
+        executor.submit(gameModel);
 
     }
 }
