@@ -1,5 +1,6 @@
 package com.nick.wood.game_of_life.model;
 
+import com.nick.wood.game_of_life.model.GameGeneral.GameModel;
 import com.nick.wood.game_of_life.model.universe.FlatUniverse;
 import com.nick.wood.game_of_life.model.universe.SphericalUniverse;
 import com.nick.wood.game_of_life.model.universe.Universe;
@@ -14,17 +15,11 @@ class GameModelTest {
 
 		Universe universe = new FlatUniverse();
 
-		State[][] stateMatrix = new State[3][3];
-
-		stateMatrix[0][0] = State.DEAD;
-		stateMatrix[0][1] = State.ALIVE;
-		stateMatrix[0][2] = State.DEAD;
-		stateMatrix[1][0] = State.ALIVE;
-		stateMatrix[1][1] = State.DEAD;
-		stateMatrix[1][2] = State.ALIVE;
-		stateMatrix[2][0] = State.DEAD;
-		stateMatrix[2][1] = State.DEAD;
-		stateMatrix[2][2] = State.ALIVE;
+		State[][] stateMatrix = new State[][] {
+				{State.DEAD, State.ALIVE, State.DEAD},
+				{State.ALIVE, State.DEAD, State.ALIVE},
+				{State.DEAD, State.DEAD, State.ALIVE},
+		};
 
 		// top left
 		boolean cellAlive1 = universe.isCellAlive(stateMatrix, 1, 1, -1, -1);
@@ -54,8 +49,6 @@ class GameModelTest {
 
 		Universe universe = new FlatUniverse();
 
-		GameModel gameModel = new GameModel(3, 3, universe);
-
 		State[][] stateMatrix = new State[3][3];
 
 		stateMatrix[0][0] = State.ALIVE;
@@ -70,11 +63,13 @@ class GameModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		State[][] update = gameModel.update(stateMatrix, universe);
+		GameOfLife game = new GameOfLife(universe, stateMatrix);
 
-		for (int x = 0; x < update.length; x++) {
-			for (int y = 0; y < update[x].length; y++) {
-				assert (update[x][y].equals(stateMatrix[x][y]));
+		game.update();
+
+		for (int x = 0; x < game.getStates().length; x++) {
+			for (int y = 0; y < game.getStates()[x].length; y++) {
+				assert (game.getStates()[x][y].equals(stateMatrix[x][y]));
 			}
 		}
 
@@ -85,11 +80,7 @@ class GameModelTest {
 
 		Universe universe = new FlatUniverse();
 
-		GameModel gameModel = new GameModel(3, 3, universe);
-
 		State[][] stateMatrix = new State[3][3];
-
-		Random random = new Random();
 
 		stateMatrix[0][0] = State.DEAD;
 		stateMatrix[0][1] = State.DEAD;
@@ -103,16 +94,19 @@ class GameModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		for (int iterations = 0; iterations < 10; iterations++) {
-			State[][] update = gameModel.update(stateMatrix, universe);
+		GameOfLife game = new GameOfLife(universe, stateMatrix);
 
-			for (int x = 0; x < update.length; x++) {
-				for (int y = 0; y < update[x].length; y++) {
-					assert (update[x][y].equals(stateMatrix[y][x]));
+		for (int iterations = 0; iterations < 10; iterations++) {
+
+			game.update();
+
+			for (int x = 0; x < game.getStates().length; x++) {
+				for (int y = 0; y < game.getStates()[x].length; y++) {
+					assert (game.getStates()[x][y].equals(stateMatrix[y][x]));
 				}
 			}
 
-			stateMatrix = update;
+			stateMatrix = game.getStates();
 		}
 
 	}
@@ -122,8 +116,6 @@ class GameModelTest {
 
 		Universe universe = new SphericalUniverse();
 
-		GameModel gameModel = new GameModel(5, 5, universe);
-
 		State[][] stateMatrix1 = new State[][] {
 				{State.DEAD, State.ALIVE, State.ALIVE, State.ALIVE, State.DEAD},
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -131,6 +123,8 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
+
+		GameOfLife game = new GameOfLife(universe, stateMatrix1);
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.ALIVE, State.DEAD, State.DEAD},
@@ -140,26 +134,24 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.ALIVE, State.DEAD, State.DEAD},
 		};
 
-		State[][] stateMatrix = stateMatrix1.clone();
-
 		for (int iterations = 0; iterations < 10; iterations++) {
-			State[][] update = gameModel.update(stateMatrix, universe);
+
+			game.update();
 
 			if (iterations%2 == 0) {
-				for (int x = 0; x < update.length; x++) {
-					for (int y = 0; y < update[x].length; y++) {
-						assert (update[x][y].equals(stateMatrix2[x][y]));
+				for (int x = 0; x < game.getStates().length; x++) {
+					for (int y = 0; y < game.getStates()[x].length; y++) {
+						assert (game.getStates()[x][y].equals(stateMatrix2[x][y]));
 					}
 				}
 			} else {
-				for (int x = 0; x < update.length; x++) {
-					for (int y = 0; y < update[x].length; y++) {
-						assert (update[x][y].equals(stateMatrix1[x][y]));
+				for (int x = 0; x < game.getStates().length; x++) {
+					for (int y = 0; y < game.getStates()[x].length; y++) {
+						assert (game.getStates()[x][y].equals(stateMatrix1[x][y]));
 					}
 				}
 			}
 
-			stateMatrix = update;
 		}
 
 	}
@@ -169,8 +161,6 @@ class GameModelTest {
 
 		Universe universe = new SphericalUniverse();
 
-		GameModel gameModel = new GameModel(5, 5, universe);
-
 		State[][] stateMatrix1 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.ALIVE},
@@ -178,6 +168,8 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.ALIVE},
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
+
+		GameOfLife game = new GameOfLife(universe, stateMatrix1);
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -187,26 +179,23 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		State[][] stateMatrix = stateMatrix1.clone();
-
 		for (int iterations = 0; iterations < 10; iterations++) {
-			State[][] update = gameModel.update(stateMatrix, universe);
+
+			game.update();
 
 			if (iterations%2 == 0) {
-				for (int x = 0; x < update.length; x++) {
-					for (int y = 0; y < update[x].length; y++) {
-						assert (update[x][y].equals(stateMatrix2[x][y]));
+				for (int x = 0; x < game.getStates().length; x++) {
+					for (int y = 0; y < game.getStates()[x].length; y++) {
+						assert (game.getStates()[x][y].equals(stateMatrix2[x][y]));
 					}
 				}
 			} else {
-				for (int x = 0; x < update.length; x++) {
-					for (int y = 0; y < update[x].length; y++) {
-						assert (update[x][y].equals(stateMatrix1[x][y]));
+				for (int x = 0; x < game.getStates().length; x++) {
+					for (int y = 0; y < game.getStates()[x].length; y++) {
+						assert (game.getStates()[x][y].equals(stateMatrix1[x][y]));
 					}
 				}
 			}
-
-			stateMatrix = update;
 		}
 
 	}
@@ -216,8 +205,6 @@ class GameModelTest {
 
 		Universe universe = new SphericalUniverse();
 
-		GameModel gameModel = new GameModel(5, 5, universe);
-
 		State[][] stateMatrix1 = new State[][] {
 			{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 			{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.ALIVE},
@@ -225,6 +212,8 @@ class GameModelTest {
 			{State.DEAD, State.DEAD, State.DEAD, State.ALIVE, State.ALIVE},
 			{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
+
+		GameOfLife game = new GameOfLife(universe, stateMatrix1);
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -264,18 +253,15 @@ class GameModelTest {
 		states[2] = stateMatrix4;
 		states[3] = stateMatrix5;
 
-		State[][] stateMatrix = stateMatrix1.clone();
-
 		for (int iterations = 0; iterations < 4; iterations++) {
-			State[][] update = gameModel.update(stateMatrix, universe);
 
-			for (int x = 0; x < update.length; x++) {
-				for (int y = 0; y < update[x].length; y++) {
-					assert (update[x][y].equals(states[iterations][x][y]));
+			game.update();
+
+			for (int x = 0; x < game.getStates().length; x++) {
+				for (int y = 0; y < game.getStates()[x].length; y++) {
+					assert (game.getStates()[x][y].equals(states[iterations][x][y]));
 				}
 			}
-
-			stateMatrix = update;
 		}
 
 	}
