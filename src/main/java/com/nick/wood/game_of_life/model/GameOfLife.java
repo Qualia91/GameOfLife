@@ -32,7 +32,18 @@ public class GameOfLife {
 		this.pixelMatrix = new int[width][height];
 		this.universe = universe;
 		this.cellSize = cellSize;
-		getInitialCells();
+		getInitialCells(Init.RANDOM, 0, 0);
+
+		createRuleMap();
+
+	}
+
+	public GameOfLife(int width, int height, Universe universe, int cellSize, Init init, int topLeftX, int topLeftY) {
+		this.states = new State[width/cellSize][height/cellSize];
+		this.pixelMatrix = new int[width][height];
+		this.universe = universe;
+		this.cellSize = cellSize;
+		getInitialCells(init, topLeftX, topLeftY);
 
 		createRuleMap();
 
@@ -107,39 +118,45 @@ public class GameOfLife {
 
 
 
-	private void getInitialCells() {
+	private void getInitialCells(Init init, int topLeftX, int topLeftY) {
 
 		for (State[] allCell : states) {
 			Arrays.fill(allCell, State.DEAD);
 		}
 
-		// Test shapes
-		// block
-		//allCells[10][10] = State.ALIVE;
-		//allCells[10][11] = State.ALIVE;
-		//allCells[11][10] = State.ALIVE;
-		//allCells[11][11] = State.ALIVE;
+		switch (init) {
+			case BLOCK:
+				states[topLeftX][topLeftY] = State.ALIVE;
+				states[topLeftX][topLeftY+1] = State.ALIVE;
+				states[topLeftX+1][topLeftY] = State.ALIVE;
+				states[topLeftX+1][topLeftY+1] = State.ALIVE;
+				break;
 
-		// blinker
-		//allCells[10][10] = State.ALIVE;
-		//allCells[11][10] = State.ALIVE;
-		//allCells[12][10] = State.ALIVE;
+			case BLINKER:
+				states[topLeftX][topLeftY] = State.ALIVE;
+				states[topLeftX+1][topLeftY] = State.ALIVE;
+				states[topLeftX+2][topLeftY] = State.ALIVE;
+				break;
 
-		// glider
-		//allCells[10][11] = State.ALIVE;
-		//allCells[11][12] = State.ALIVE;
-		//allCells[12][10] = State.ALIVE;
-		//allCells[12][11] = State.ALIVE;
-		//allCells[12][12] = State.ALIVE;
+			case GLIDER:
+				states[topLeftX][topLeftY+1] = State.ALIVE;
+				states[topLeftX+1][topLeftY+2] = State.ALIVE;
+				states[topLeftX+2][topLeftY] = State.ALIVE;
+				states[topLeftX+2][topLeftY+1] = State.ALIVE;
+				states[topLeftX+2][topLeftY+2] = State.ALIVE;
+				break;
 
-		// random
-		//for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
-		//	for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
-		//		if (random.nextInt(1_000_000) < 700_000) {
-		//			states[rowIndex][colIndex] = State.ALIVE;
-		//		}
-		//	}
-		//}
+			case RANDOM:
+				for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
+					for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
+						if (random.nextInt(1_000_000) < 700_000) {
+							states[rowIndex][colIndex] = State.ALIVE;
+						}
+					}
+				}
+				break;
+
+		}
 	}
 
 	public State[][] getStates() {
