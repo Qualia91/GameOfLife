@@ -62,7 +62,12 @@ class GameModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix, 1);
+		GoLBuilder goLBuilder = new GoLBuilder();
+		goLBuilder.setUniverse(universe);
+		goLBuilder.setStates(stateMatrix);
+		goLBuilder.setCellSize(1);
+
+		GameOfLife game = goLBuilder.build();
 
 		game.update();
 
@@ -93,7 +98,12 @@ class GameModelTest {
 		stateMatrix[2][1] = State.DEAD;
 		stateMatrix[2][2] = State.DEAD;
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix, 1);
+		GoLBuilder goLBuilder = new GoLBuilder();
+		goLBuilder.setUniverse(universe);
+		goLBuilder.setStates(stateMatrix);
+		goLBuilder.setCellSize(1);
+
+		GameOfLife game = goLBuilder.build();
 
 		for (int iterations = 0; iterations < 10; iterations++) {
 
@@ -123,7 +133,12 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix1, 1);
+		GoLBuilder goLBuilder = new GoLBuilder();
+		goLBuilder.setUniverse(universe);
+		goLBuilder.setStates(stateMatrix1);
+		goLBuilder.setCellSize(1);
+
+		GameOfLife game = goLBuilder.build();
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.ALIVE, State.DEAD, State.DEAD},
@@ -168,7 +183,12 @@ class GameModelTest {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix1, 1);
+		GoLBuilder goLBuilder = new GoLBuilder();
+		goLBuilder.setUniverse(universe);
+		goLBuilder.setStates(stateMatrix1);
+		goLBuilder.setCellSize(1);
+
+		GameOfLife game = goLBuilder.build();
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
@@ -212,7 +232,12 @@ class GameModelTest {
 			{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},
 		};
 
-		GameOfLife game = new GameOfLife(universe, stateMatrix1, 1);
+		GoLBuilder goLBuilder = new GoLBuilder();
+		goLBuilder.setUniverse(universe);
+		goLBuilder.setStates(stateMatrix1);
+		goLBuilder.setCellSize(1);
+
+		GameOfLife game = goLBuilder.build();
 
 		State[][] stateMatrix2 = new State[][] {
 				{State.DEAD, State.DEAD, State.DEAD, State.DEAD, State.DEAD},

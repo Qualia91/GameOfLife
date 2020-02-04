@@ -1,11 +1,9 @@
 package com.nick.wood.game_of_life.model;
 
+import com.nick.wood.game_of_life.model.universe.FlatUniverse;
 import com.nick.wood.game_of_life.model.universe.Universe;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class GameOfLife {
 
@@ -16,49 +14,34 @@ public class GameOfLife {
 	private final Map<State, Interaction[]> rulesMap = new HashMap<>();
 	private final int cellSize;
 
-	public GameOfLife(Universe universe, State[][] startingStateMatrix, int cellSize) {
+	public GameOfLife(GoLBuilder goLBuilder) {
 
-		this.states = startingStateMatrix;
-		this.pixelMatrix = new int[startingStateMatrix.length*cellSize][startingStateMatrix[0].length*cellSize];
-		this.universe = universe;
-		this.cellSize = cellSize;
-
-		createRuleMap();
-
-	}
-
-	public GameOfLife(int width, int height, Universe universe, int cellSize) {
-		this.states = new State[width/cellSize][height/cellSize];
+		int width = goLBuilder.width.orElse(100);
+		int height = goLBuilder.height.orElse(100);
+		this.cellSize = goLBuilder.cellSize.orElse(1);
+		this.universe = goLBuilder.universe.orElse(new FlatUniverse());
+		this.states = goLBuilder.states.orElse(new State[width/this.cellSize][height/this.cellSize]);
 		this.pixelMatrix = new int[width][height];
-		this.universe = universe;
-		this.cellSize = cellSize;
-		getInitialCells(Init.RANDOM, 0, 0);
-
-		createRuleMap();
-
-	}
-
-	public GameOfLife(int width, int height, Universe universe, int cellSize, Init init, int topLeftX, int topLeftY) {
-		this.states = new State[width/cellSize][height/cellSize];
-		this.pixelMatrix = new int[width][height];
-		this.universe = universe;
-		this.cellSize = cellSize;
-		getInitialCells(init, topLeftX, topLeftY);
-
-		createRuleMap();
+		this.rulesMap.putAll(goLBuilder.rulesMap.orElse(createRuleMap()));
+		getInitialCells(
+				goLBuilder.init.orElse(Init.CLEAR),
+				goLBuilder.topLeftX.orElse(0),
+				goLBuilder.topLeftY.orElse(0));
 
 	}
 
-	private void createRuleMap() {
+	private Map<State, Interaction[]> createRuleMap() {
+		Map<State, Interaction[]> defaultRulesMap = new HashMap<>();
 		Interaction[] aliveInteractions = new Interaction[] {
 				new Interaction(State.ALIVE, new int[] {2, 3})
 		};
-		rulesMap.put(State.ALIVE, aliveInteractions);
+		defaultRulesMap.put(State.ALIVE, aliveInteractions);
 
 		Interaction[] deadInteractions = new Interaction[] {
 				new Interaction(State.ALIVE, new int[] {3})
 		};
-		rulesMap.put(State.DEAD, deadInteractions);
+		defaultRulesMap.put(State.DEAD, deadInteractions);
+		return defaultRulesMap;
 	}
 
 	public void update() {
@@ -120,42 +103,45 @@ public class GameOfLife {
 
 	private void getInitialCells(Init init, int topLeftX, int topLeftY) {
 
-		for (State[] allCell : states) {
-			Arrays.fill(allCell, State.DEAD);
-		}
 
-		switch (init) {
-			case BLOCK:
-				states[topLeftX][topLeftY] = State.ALIVE;
-				states[topLeftX][topLeftY+1] = State.ALIVE;
-				states[topLeftX+1][topLeftY] = State.ALIVE;
-				states[topLeftX+1][topLeftY+1] = State.ALIVE;
-				break;
 
-			case BLINKER:
-				states[topLeftX][topLeftY] = State.ALIVE;
-				states[topLeftX+1][topLeftY] = State.ALIVE;
-				states[topLeftX+2][topLeftY] = State.ALIVE;
-				break;
+		if (!init.equals(Init.CLEAR)) {
+			for (State[] allCell : states) {
+				Arrays.fill(allCell, State.DEAD);
+			}
+			switch (init) {
+				case BLOCK:
+					states[topLeftX][topLeftY] = State.ALIVE;
+					states[topLeftX][topLeftY + 1] = State.ALIVE;
+					states[topLeftX + 1][topLeftY] = State.ALIVE;
+					states[topLeftX + 1][topLeftY + 1] = State.ALIVE;
+					break;
 
-			case GLIDER:
-				states[topLeftX][topLeftY+1] = State.ALIVE;
-				states[topLeftX+1][topLeftY+2] = State.ALIVE;
-				states[topLeftX+2][topLeftY] = State.ALIVE;
-				states[topLeftX+2][topLeftY+1] = State.ALIVE;
-				states[topLeftX+2][topLeftY+2] = State.ALIVE;
-				break;
+				case BLINKER:
+					states[topLeftX][topLeftY] = State.ALIVE;
+					states[topLeftX + 1][topLeftY] = State.ALIVE;
+					states[topLeftX + 2][topLeftY] = State.ALIVE;
+					break;
 
-			case RANDOM:
-				for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
-					for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
-						if (random.nextInt(1_000_000) < 700_000) {
-							states[rowIndex][colIndex] = State.ALIVE;
+				case GLIDER:
+					states[topLeftX][topLeftY + 1] = State.ALIVE;
+					states[topLeftX + 1][topLeftY + 2] = State.ALIVE;
+					states[topLeftX + 2][topLeftY] = State.ALIVE;
+					states[topLeftX + 2][topLeftY + 1] = State.ALIVE;
+					states[topLeftX + 2][topLeftY + 2] = State.ALIVE;
+					break;
+
+				case RANDOM:
+					for (int rowIndex = 0; rowIndex < states.length; rowIndex++) {
+						for (int colIndex = 0; colIndex < states[rowIndex].length; colIndex++) {
+							if (random.nextInt(1_000_000) < 700_000) {
+								states[rowIndex][colIndex] = State.ALIVE;
+							}
 						}
 					}
-				}
-				break;
+					break;
 
+			}
 		}
 	}
 
