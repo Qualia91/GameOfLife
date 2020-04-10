@@ -1,0 +1,10 @@
+alive {
+	alive {
+		2 or 3
+	}
+}
+dead {
+	alive {
+		3
+	}
+}

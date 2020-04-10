@@ -22,9 +22,9 @@ public class GameOfLife {
 		this.universe = goLBuilder.universe.orElse(new FlatUniverse());
 		this.states = goLBuilder.states.orElse(new State[width/this.cellSize][height/this.cellSize]);
 		this.pixelMatrix = new int[width][height];
-		this.rulesMap.putAll(goLBuilder.rulesMap.orElse(createRuleMap()));
+		this.rulesMap.putAll(createRuleMap());
 		getInitialCells(
-				goLBuilder.init.orElse(Init.CLEAR),
+				goLBuilder.init.orElse(Init.GLIDER),
 				goLBuilder.topLeftX.orElse(0),
 				goLBuilder.topLeftY.orElse(0));
 
